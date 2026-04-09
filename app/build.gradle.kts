@@ -48,8 +48,9 @@ dependencies {
   implementation(libs.androidx.compose.material3)
   implementation(libs.bundles.koin)
   implementation(libs.bundles.networking)
+    implementation(libs.androidx.material3)
 
-  debugImplementation(libs.androidx.compose.ui.tooling)
+    debugImplementation(libs.androidx.compose.ui.tooling)
   debugImplementation(libs.androidx.compose.ui.test.manifest)
 
   androidTestImplementation(libs.androidx.junit)

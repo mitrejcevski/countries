@@ -1,24 +1,59 @@
 package nl.jovmit.countries
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 sealed class CountriesListUiState {
-  data object Idle : CountriesListUiState()
-  data class Countries(val countries: List<Country>) : CountriesListUiState()
-  sealed class Error : CountriesListUiState() {
-    data object BackendError : Error()
-    data object ConnectivityError : Error()
-  }
+    data object Idle : CountriesListUiState()
+    data class Countries(
+        val countries: List<Country>,
+    ) : CountriesListUiState()
+
+    sealed class Error : CountriesListUiState() {
+        data object BackendError : Error()
+        data object ConnectivityError : Error()
+    }
 }
 
-class CountriesViewModel : ViewModel() {
+class CountriesViewModel(
+    private val repository: CountriesRepository,
+    val dispatcher: CoroutineDispatcher = Dispatchers.IO
+) : ViewModel() {
 
-  private val _uiState = MutableStateFlow<CountriesListUiState>(CountriesListUiState.Idle)
-  val uiState: StateFlow<CountriesListUiState> = _uiState
+    private val _uiState = MutableStateFlow<CountriesListUiState>(CountriesListUiState.Idle)
+    val uiState: StateFlow<CountriesListUiState> = _uiState
 
-  fun loadCountries() {
-    //TODO load countries and update the UI state
-  }
+    fun loadCountries() {
+        viewModelScope.launch {
+            val result = withContext(dispatcher) {
+                repository.getCountries()
+            }
+
+            when (result) {
+                is CountriesResult.Success -> {
+                    _uiState.update { CountriesListUiState.Countries(result.countries) }
+                }
+
+                is CountriesResult.BackendError -> {
+                    _uiState.update {
+                        CountriesListUiState.Error.BackendError
+                    }
+                }
+
+                is CountriesResult.ConnectivityError -> {
+                    _uiState.update {
+                        CountriesListUiState.Error.ConnectivityError
+                    }
+
+                }
+            }
+        }
+    }
 }
