@@ -1,7 +1,10 @@
-package nl.jovmit.countries
+package nl.jovmit.countries.di
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
+import nl.jovmit.countries.data.remote.CountriesApi
+import nl.jovmit.countries.data.repository.CountriesRepository
+import nl.jovmit.countries.ui.viewmodel.CountriesViewModel
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import org.koin.core.module.dsl.viewModel

@@ -1,5 +1,7 @@
-package nl.jovmit.countries
+package nl.jovmit.countries.data.remote
 
+import nl.jovmit.countries.data.model.CountriesListResponse
+import nl.jovmit.countries.data.model.CountryDetailsResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -13,5 +15,5 @@ interface CountriesApi {
   @GET("/api/countries")
   suspend fun getCountryDetails(
     @Query("name") name: String
-  ): CountryDetailsResponse
+  ): CountriesListResponse
 }

@@ -1,4 +1,4 @@
-package nl.jovmit.countries
+package nl.jovmit.countries.di
 
 import android.app.Application
 import org.koin.android.ext.koin.androidContext
@@ -8,9 +8,9 @@ class CountriesApp : Application() {
 
   override fun onCreate() {
     super.onCreate()
-    startKoin {
-      androidContext(this@CountriesApp)
-      modules(networkModule)
-    }
+      startKoin {
+          androidContext(this@CountriesApp)
+          modules(networkModule)
+      }
   }
 }

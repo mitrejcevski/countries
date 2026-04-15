@@ -1,4 +1,4 @@
-package nl.jovmit.countries
+package nl.jovmit.countries.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,6 +9,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import nl.jovmit.countries.data.repository.CountriesRepository
+import nl.jovmit.countries.ui.viewmodel.CountriesResult
+import nl.jovmit.countries.data.model.Country
 
 sealed class CountriesListUiState {
     data object Idle : CountriesListUiState()
@@ -56,4 +59,23 @@ class CountriesViewModel(
             }
         }
     }
+
+    fun toggleFavorite(countryName: String) {
+        _uiState.update { currentState ->
+
+            when (currentState) {
+                is CountriesListUiState.Countries -> {
+                    val updatedList = currentState.countries
+                        .map {
+                            if (it.name == countryName) {
+                                it.copy(isFavorite = !it.isFavorite)
+                            } else it
+                        }
+                    currentState.copy(countries = updatedList)
+                }
+                else -> currentState
+            }
+        }
+    }
+
 }

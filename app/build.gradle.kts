@@ -48,9 +48,10 @@ dependencies {
   implementation(libs.androidx.compose.material3)
   implementation(libs.bundles.koin)
   implementation(libs.bundles.networking)
-    implementation(libs.androidx.material3)
+  implementation(libs.androidx.material3)
+  implementation(libs.androidx.room3.compiler)
 
-    debugImplementation(libs.androidx.compose.ui.tooling)
+  debugImplementation(libs.androidx.compose.ui.tooling)
   debugImplementation(libs.androidx.compose.ui.test.manifest)
 
   androidTestImplementation(libs.androidx.junit)
@@ -60,4 +61,10 @@ dependencies {
 
   testImplementation(libs.junit)
   testImplementation(libs.truth)
+
+  implementation("androidx.navigation:navigation-compose:2.7.7")
+  implementation("androidx.compose.material:material-icons-extended")
+
+  // Room
+  implementation("androidx.room:room-runtime:2.6.1")
 }
