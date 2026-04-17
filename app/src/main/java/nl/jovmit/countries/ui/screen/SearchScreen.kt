@@ -38,58 +38,48 @@ private val products = listOf(
     ProductUiModel("4", "Item 4", "4", true, true),
 )
 
+sealed class ProductInfo(open val product: ProductUiModel) {
+    data class Search(override val product: ProductUiModel) : ProductInfo(product)
+    data class Deal(override val product: ProductUiModel) : ProductInfo(product)
+}
+
 @Composable
 fun SearchScreen() {
-    Column(
-        modifier = Modifier
-          .fillMaxSize()
-          .padding(16.dp)
-    ) {
-        Text(text = "Search Results")
-        Spacer(modifier = Modifier.height(12.dp))
-
-        products.forEach { product ->
-            var added by remember { mutableStateOf(false) }
-
-            ListItem(
-                productInfo = ProductInfo.Search(product),
-                selected = added,
-                onClickButton = { added = !added }
-            )
-        }
-    }
+    BuildListScreen("Search Results")
 }
 
 @Composable
 fun DealsScreen(loading: Boolean) {
+    BuildListScreen("Deals", loading)
+}
+
+@Composable
+private fun BuildListScreen(title: String, isLoading: Boolean = false) {
+
     Column(
         modifier = Modifier
-          .fillMaxSize()
-          .padding(16.dp)
+            .fillMaxSize()
+            .padding(16.dp)
     ) {
-        Text(text = "Deals")
+        Text(text = title)
         Spacer(modifier = Modifier.height(12.dp))
 
-        if (loading) {
+        if (title == "Deals" && isLoading) {
             CircularProgressIndicator()
         } else {
             products.forEach { product ->
-                var favorite by remember { mutableStateOf(false) }
+                var added by remember { mutableStateOf(false) }
 
                 ListItem(
-                    productInfo = ProductInfo.Deal(product),
-                    selected = favorite,
-                    onClickButton = { favorite = !favorite }
+                    productInfo = if (title == "Search Results") ProductInfo.Search(product) else ProductInfo.Deal(
+                        product
+                    ),
+                    selected = added,
+                    onClickButton = { added = !added }
                 )
             }
         }
     }
-}
-
-
-sealed class ProductInfo(open val product: ProductUiModel) {
-    data class Search(override val product: ProductUiModel) : ProductInfo(product)
-    data class Deal(override val product: ProductUiModel) : ProductInfo(product)
 }
 
 @Composable
@@ -104,11 +94,11 @@ private fun ListItem(
 
             Column(
                 modifier = Modifier
-                  .fillMaxWidth()
-                  .padding(bottom = 12.dp)
-                  .background(Color.LightGray, RoundedCornerShape(12.dp))
-                  .clickable { println("open product ${info.product.id}") }
-                  .padding(16.dp)
+                    .fillMaxWidth()
+                    .padding(bottom = 12.dp)
+                    .background(Color.LightGray, RoundedCornerShape(12.dp))
+                    .clickable { println("open product ${info.product.id}") }
+                    .padding(16.dp)
             ) {
                 if (info.product.isSponsored) {
                     Text(text = "Sponsored", color = Color.Red)
@@ -141,11 +131,11 @@ private fun ListItem(
 
             Column(
                 modifier = Modifier
-                  .fillMaxWidth()
-                  .padding(bottom = 12.dp)
-                  .background(Color.LightGray, RoundedCornerShape(12.dp))
-                  .clickable { println("open deal ${info.product.id}") }
-                  .padding(16.dp)
+                    .fillMaxWidth()
+                    .padding(bottom = 12.dp)
+                    .background(Color.LightGray, RoundedCornerShape(12.dp))
+                    .clickable { println("open deal ${info.product.id}") }
+                    .padding(16.dp)
             ) {
                 Text(text = info.product.title)
                 Spacer(modifier = Modifier.height(8.dp))
@@ -175,14 +165,14 @@ private fun TextButton(
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
-          .background(
-            color,
-            RoundedCornerShape(8.dp)
-          )
-          .clickable(enabled) {
-            onClick()
-          }
-          .padding(horizontal = 12.dp, vertical = 8.dp)
+            .background(
+                color,
+                RoundedCornerShape(8.dp)
+            )
+            .clickable(enabled) {
+                onClick()
+            }
+            .padding(horizontal = 12.dp, vertical = 8.dp)
     ) {
         Text(
             text = textLabel,
