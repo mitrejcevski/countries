@@ -92,70 +92,78 @@ private fun ListItem(
     onClickButton: () -> Unit
 ) {
     when (val info = productInfo) {
-
-        is ProductInfo.Search -> {
-
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 12.dp)
-                    .background(Color.LightGray, RoundedCornerShape(12.dp))
-                    .clickable { println("open product ${info.product.id}") }
-                    .padding(16.dp)
-            ) {
-                if (info.product.isSponsored) {
-                    Text(text = stringResource(R.string.sponsored), color = Color.Red)
-                    Spacer(modifier = Modifier.height(8.dp))
-                }
-
-                Text(text = info.product.title)
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(text = info.product.price)
-
-                Spacer(modifier = Modifier.height(12.dp))
-
-                TextButton(
-                    textLabel = if (info.product.isInStock) {
-                        if (selected) "Added" else "Add to cart"
-                    } else {
-                        "Out of stock"
-                    },
-                    color = if (info.product.isInStock) Color.Blue else Color.Gray,
-                    onClick = {
-                        if (info.product.isInStock)
-                            onClickButton()
-                    },
-                    enabled = info.product.isInStock
-                )
-            }
-        }
-
-        is ProductInfo.Deal -> {
-
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 12.dp)
-                    .background(Color.LightGray, RoundedCornerShape(12.dp))
-                    .clickable { println("open deal ${info.product.id}") }
-                    .padding(16.dp)
-            ) {
-                Text(text = info.product.title)
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(text = info.product.price)
-
-                Spacer(modifier = Modifier.height(12.dp))
-
-                TextButton(
-                    textLabel = if (selected) "Wishlisted" else "Add to wishlist",
-                    color = if (selected) Color.Magenta else Color.DarkGray,
-                    onClick = { onClickButton() }
-                )
-            }
-
-        }
+        is ProductInfo.Search -> SearchListItem(info, selected, onClickButton)
+        is ProductInfo.Deal -> DealsListItem(info, selected, onClickButton)
     }
+}
 
+@Composable
+private fun SearchListItem(
+    info: ProductInfo.Search,
+    selected: Boolean,
+    onClickButton: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 12.dp)
+            .background(Color.LightGray, RoundedCornerShape(12.dp))
+            .clickable { println("open product ${info.product.id}") }
+            .padding(16.dp)
+    ) {
+        if (info.product.isSponsored) {
+            Text(text = stringResource(R.string.sponsored), color = Color.Red)
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+
+        Text(text = info.product.title)
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(text = info.product.price)
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        TextButton(
+            textLabel = if (info.product.isInStock) {
+                if (selected) "Added" else "Add to cart"
+            } else {
+                "Out of stock"
+            },
+            color = if (info.product.isInStock) Color.Blue else Color.Gray,
+            onClick = {
+                if (info.product.isInStock)
+                    onClickButton()
+            },
+            enabled = info.product.isInStock
+        )
+    }
+}
+
+@Composable
+private fun DealsListItem(
+    info: ProductInfo.Deal,
+    selected: Boolean,
+    onClickButton: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 12.dp)
+            .background(Color.LightGray, RoundedCornerShape(12.dp))
+            .clickable { println("open deal ${info.product.id}") }
+            .padding(16.dp)
+    ) {
+        Text(text = info.product.title)
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(text = info.product.price)
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        TextButton(
+            textLabel = if (selected) "Wishlisted" else "Add to wishlist",
+            color = if (selected) Color.Magenta else Color.DarkGray,
+            onClick = { onClickButton() }
+        )
+    }
 }
 
 @Composable
