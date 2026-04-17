@@ -3,4 +3,6 @@
     <string name="search_results">Search Results</string>
     <string name="deals">Deals</string>
     <string name="sponsored">Sponsored</string>
+    <string name="open_product">Open product %1$s</string>
+    <string name="open_deal">Open deal %1$s</string>
 </resources>

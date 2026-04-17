@@ -1,5 +1,6 @@
 package nl.jovmit.countries.ui.screen
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -20,6 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -47,16 +49,34 @@ sealed class ProductInfo(open val product: ProductUiModel) {
 
 @Composable
 fun SearchScreen() {
-    BuildListScreen(title = stringResource(R.string.search_results))
+    val openProductLabel = stringResource(R.string.open_product)
+
+    BuildListScreen(
+        title = stringResource(R.string.search_results),
+        onItemClick = { productId ->
+            println("$openProductLabel $productId")
+        }
+    )
 }
 
 @Composable
 fun DealsScreen(loading: Boolean) {
-    BuildListScreen(stringResource(R.string.deals), loading)
+    val openProductLabel = stringResource(R.string.open_product)
+
+    BuildListScreen(
+        stringResource(R.string.deals),
+        loading,
+        onItemClick = { productId ->
+            println("$openProductLabel $productId")
+        })
 }
 
 @Composable
-private fun BuildListScreen(title: String, isLoading: Boolean = false) {
+private fun BuildListScreen(
+    title: String,
+    isLoading: Boolean = false,
+    onItemClick: (id: String) -> Unit
+) {
 
     Column(
         modifier = Modifier
@@ -78,7 +98,10 @@ private fun BuildListScreen(title: String, isLoading: Boolean = false) {
                     else
                         ProductInfo.Deal(product),
                     selected = added,
-                    onClickButton = { added = !added }
+                    onClickButton = { added = !added },
+                    onClickListItem = {
+                        onItemClick(product.id)
+                    }
                 )
             }
         }
@@ -89,11 +112,23 @@ private fun BuildListScreen(title: String, isLoading: Boolean = false) {
 private fun ListItem(
     productInfo: ProductInfo,
     selected: Boolean,
-    onClickButton: () -> Unit
+    onClickButton: () -> Unit,
+    onClickListItem: (id: String) -> Unit
 ) {
     when (val info = productInfo) {
-        is ProductInfo.Search -> SearchListItem(info, selected, onClickButton)
-        is ProductInfo.Deal -> DealsListItem(info, selected, onClickButton)
+        is ProductInfo.Search -> SearchListItem(
+            info = info,
+            selected = selected,
+            onClickButton = onClickButton,
+            onClickListItem = onClickListItem
+        )
+
+        is ProductInfo.Deal -> DealsListItem(
+            info = info,
+            selected = selected,
+            onClickButton = onClickButton,
+            onClickListItem = onClickListItem
+        )
     }
 }
 
@@ -101,14 +136,15 @@ private fun ListItem(
 private fun SearchListItem(
     info: ProductInfo.Search,
     selected: Boolean,
-    onClickButton: () -> Unit
+    onClickButton: () -> Unit,
+    onClickListItem: (id: String) -> Unit
 ) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 12.dp)
             .background(Color.LightGray, RoundedCornerShape(12.dp))
-            .clickable { println("open product ${info.product.id}") }
+            .clickable { onClickListItem(info.product.id) }
             .padding(16.dp)
     ) {
         if (info.product.isSponsored) {
@@ -142,14 +178,15 @@ private fun SearchListItem(
 private fun DealsListItem(
     info: ProductInfo.Deal,
     selected: Boolean,
-    onClickButton: () -> Unit
+    onClickButton: () -> Unit,
+    onClickListItem: (id: String) -> Unit
 ) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 12.dp)
             .background(Color.LightGray, RoundedCornerShape(12.dp))
-            .clickable { println("open deal ${info.product.id}") }
+            .clickable { onClickListItem(info.product.id) }
             .padding(16.dp)
     ) {
         Text(text = info.product.title)
