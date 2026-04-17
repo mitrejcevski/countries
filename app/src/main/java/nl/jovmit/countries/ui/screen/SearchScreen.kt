@@ -67,16 +67,17 @@ private fun BuildListScreen(title: String, isLoading: Boolean = false) {
         Text(text = title)
         Spacer(modifier = Modifier.height(12.dp))
 
-        if (title == "Deals" && isLoading) {
+        if (title == stringResource(R.string.deals) && isLoading) {
             CircularProgressIndicator()
         } else {
             products.forEach { product ->
                 var added by remember { mutableStateOf(false) }
 
                 ListItem(
-                    productInfo = if (title == "Search Results") ProductInfo.Search(product) else ProductInfo.Deal(
-                        product
-                    ),
+                    productInfo = if (title == stringResource(R.string.search_results))
+                        ProductInfo.Search(product)
+                    else
+                        ProductInfo.Deal(product),
                     selected = added,
                     onClickButton = { added = !added }
                 )
@@ -104,7 +105,7 @@ private fun ListItem(
                     .padding(16.dp)
             ) {
                 if (info.product.isSponsored) {
-                    Text(text = "Sponsored", color = Color.Red)
+                    Text(text = stringResource(R.string.sponsored), color = Color.Red)
                     Spacer(modifier = Modifier.height(8.dp))
                 }
 
