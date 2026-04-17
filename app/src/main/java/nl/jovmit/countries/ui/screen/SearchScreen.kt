@@ -158,9 +158,12 @@ private fun SearchListItem(
 
         TextButton(
             textLabel = if (info.product.isInStock) {
-                if (selected) "Added" else "Add to cart"
+                if (selected)
+                    stringResource(R.string.added)
+                else
+                    stringResource(R.string.add_to_cart)
             } else {
-                "Out of stock"
+                stringResource(R.string.out_of_stock)
             },
             color = if (info.product.isInStock) Color.Blue else Color.Gray,
             onClick = {
@@ -194,7 +197,10 @@ private fun DealsListItem(
         Spacer(modifier = Modifier.height(12.dp))
 
         TextButton(
-            textLabel = if (selected) "Wishlisted" else "Add to wishlist",
+            textLabel = if (selected)
+                stringResource(R.string.wishlisted)
+            else
+                stringResource(R.string.add_to_wishlist),
             color = if (selected) Color.Magenta else Color.DarkGray,
             onClick = { onClickButton() }
         )
