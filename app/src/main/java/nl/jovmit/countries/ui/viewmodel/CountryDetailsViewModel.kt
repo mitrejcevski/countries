@@ -24,7 +24,7 @@ sealed class CountryDetailUiState {
     }
 }
 
-class CountryDetailViewModel(
+class CountryDetailsViewModel(
     val repository: CountriesRepository, val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : ViewModel() {
 

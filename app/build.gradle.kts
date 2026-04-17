@@ -37,6 +37,10 @@ android {
   }
 }
 
+configurations.all {
+  exclude(group = "com.intellij", module = "annotations")
+}
+
 dependencies {
   implementation(platform(libs.androidx.compose.bom))
   implementation(libs.androidx.core.ktx)
@@ -62,9 +66,12 @@ dependencies {
   testImplementation(libs.junit)
   testImplementation(libs.truth)
 
-  implementation("androidx.navigation:navigation-compose:2.7.7")
+  implementation("androidx.navigation:navigation-compose:2.9.7")
   implementation("androidx.compose.material:material-icons-extended")
 
   // Room
   implementation("androidx.room:room-runtime:2.6.1")
+
+  // ✅ Add this line
+  implementation("org.jetbrains:annotations:23.0.0")
 }

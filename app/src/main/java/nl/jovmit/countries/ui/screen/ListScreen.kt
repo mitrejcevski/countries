@@ -19,6 +19,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -30,60 +31,80 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import nl.jovmit.countries.ui.viewmodel.CountriesListUiState
 import nl.jovmit.countries.ui.viewmodel.CountriesViewModel
 import nl.jovmit.countries.data.model.Country
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun ListScreen(
+fun HomeScreen(
     modifier: Modifier = Modifier,
-    viewModel: CountriesViewModel,
-    onClick: (String) -> Unit = {},
-    onClickFavorite: (String) -> Unit = {}
+    onClick: (String) -> Unit = {}
 ) {
-
+    val viewModel: CountriesViewModel = koinViewModel()
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         viewModel.loadCountries()
     }
 
-    Column(
-        modifier = modifier.fillMaxSize()
-    ) {
+    HomeScreenContent(
+        modifier = modifier,
+        state = state,
+        onClick = onClick,
+        onClickFavorite = viewModel::toggleFavorite
+    )
+}
 
-        when (val uiState = state) {
+@Composable
+fun HomeScreenContent(
+    modifier: Modifier = Modifier,
+    state: CountriesListUiState,
+    onClick: (String) -> Unit = {},
+    onClickFavorite: (String) -> Unit = {}
+) {
 
-            is CountriesListUiState.Countries -> {
-                val list = uiState.countries
+    Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
 
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(12.dp),
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    items(list, key = { it.name }) { country ->
-                        CountryCard(
-                            country,
-                            onClick,
-                            onClickFavorite
-                        )
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+        ) {
+
+            when (val uiState = state) {
+
+                is CountriesListUiState.Countries -> {
+                    val list = uiState.countries
+
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(12.dp),
+                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        items(list, key = { it.name }) { country ->
+                            CountryCard(
+                                country,
+                                onClick,
+                                onClickFavorite
+                            )
+                        }
                     }
                 }
-            }
 
-            is CountriesListUiState.Idle -> {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
+                is CountriesListUiState.Idle -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
                 }
-            }
 
-            else -> {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text("Something went wrong")
+                else -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text("Something went wrong")
+                    }
                 }
             }
         }
@@ -99,7 +120,9 @@ fun CountryCard(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onClick(country.name) },
+            .clickable {
+                onClick(country.name)
+            },
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
         Column(modifier = Modifier.padding(12.dp)) {

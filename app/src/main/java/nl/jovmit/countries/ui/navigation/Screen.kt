@@ -1,6 +1,9 @@
 package nl.jovmit.countries.ui.navigation
 
-sealed class Screen(val route: String) {
-    object List : Screen("list")
-    object Detail : Screen("detail")
+import kotlinx.serialization.Serializable
+
+@Serializable
+sealed interface Screen {
+    data object Home : Screen
+    data class Details(val countryName: String) : Screen
 }
