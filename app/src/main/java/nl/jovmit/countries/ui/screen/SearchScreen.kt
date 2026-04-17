@@ -20,8 +20,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import nl.jovmit.countries.R
+import androidx.compose.ui.res.stringResource
 
 data class ProductUiModel(
     val id: String,
@@ -45,12 +48,12 @@ sealed class ProductInfo(open val product: ProductUiModel) {
 
 @Composable
 fun SearchScreen() {
-    BuildListScreen("Search Results")
+    BuildListScreen(title = stringResource(R.string.search_results))
 }
 
 @Composable
 fun DealsScreen(loading: Boolean) {
-    BuildListScreen("Deals", loading)
+    BuildListScreen(stringResource(R.string.deals), loading)
 }
 
 @Composable
