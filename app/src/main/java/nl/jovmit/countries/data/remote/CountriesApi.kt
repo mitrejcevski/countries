@@ -1,7 +1,6 @@
 package nl.jovmit.countries.data.remote
 
 import nl.jovmit.countries.data.model.CountriesListResponse
-import nl.jovmit.countries.data.model.CountryDetailsResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 

@@ -9,9 +9,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import nl.jovmit.countries.data.repository.CountriesRepository
-import nl.jovmit.countries.ui.viewmodel.CountriesResult
 import nl.jovmit.countries.data.model.Country
+import nl.jovmit.countries.data.repository.CountriesRepository
 
 sealed class CountriesListUiState {
     data object Idle : CountriesListUiState()

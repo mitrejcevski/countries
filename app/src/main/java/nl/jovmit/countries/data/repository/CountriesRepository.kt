@@ -1,9 +1,8 @@
 package nl.jovmit.countries.data.repository
 
+import nl.jovmit.countries.data.model.Country
 import nl.jovmit.countries.data.remote.CountriesApi
 import nl.jovmit.countries.ui.viewmodel.CountriesResult
-import nl.jovmit.countries.data.model.Country
-import nl.jovmit.countries.data.model.CountryDetailsResponse
 import nl.jovmit.countries.ui.viewmodel.CountryDetailsResult
 import okio.IOException
 import retrofit2.HttpException
