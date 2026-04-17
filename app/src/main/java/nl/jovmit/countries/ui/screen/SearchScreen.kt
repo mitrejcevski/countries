@@ -139,7 +139,14 @@ private fun ListItem(
 
         is ProductInfo.Deal -> {
 
-
+            Column(
+                modifier = Modifier
+                  .fillMaxWidth()
+                  .padding(bottom = 12.dp)
+                  .background(Color.LightGray, RoundedCornerShape(12.dp))
+                  .clickable { println("open deal ${info.product.id}") }
+                  .padding(16.dp)
+            ) {
                 Text(text = info.product.title)
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(text = info.product.price)
