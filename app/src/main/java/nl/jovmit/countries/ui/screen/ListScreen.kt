@@ -1,5 +1,6 @@
 package nl.jovmit.countries.ui.screen
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,134 +22,170 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import nl.jovmit.countries.data.model.Country
 import nl.jovmit.countries.ui.viewmodel.CountriesListUiState
 import nl.jovmit.countries.ui.viewmodel.CountriesViewModel
-import nl.jovmit.countries.data.model.Country
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun HomeScreen(
-    modifier: Modifier = Modifier,
-    onClick: (String) -> Unit = {}
+  modifier: Modifier = Modifier,
+  onClick: (String) -> Unit = {}
 ) {
-    val viewModel: CountriesViewModel = koinViewModel()
-    val state by viewModel.uiState.collectAsStateWithLifecycle()
+  val viewModel: CountriesViewModel = koinViewModel()
+  val state by viewModel.uiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(Unit) {
-        viewModel.loadCountries()
-    }
+  LaunchedEffect(Unit) {
+    viewModel.loadCountries()
+  }
 
-    HomeScreenContent(
-        modifier = modifier,
-        state = state,
-        onClick = onClick,
-        onClickFavorite = viewModel::toggleFavorite
-    )
+  HomeScreenContent(
+    modifier = modifier,
+    state = state,
+    onClick = onClick,
+    onClickFavorite = viewModel::toggleFavorite
+  )
 }
 
 @Composable
 fun HomeScreenContent(
-    modifier: Modifier = Modifier,
-    state: CountriesListUiState,
-    onClick: (String) -> Unit = {},
-    onClickFavorite: (String) -> Unit = {}
+  modifier: Modifier = Modifier,
+  state: CountriesListUiState,
+  onClick: (String) -> Unit = {},
+  onClickFavorite: (String) -> Unit = {}
 ) {
 
-    Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+  Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
 
-        Column(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-        ) {
+    Column(
+      modifier = modifier
+        .fillMaxSize()
+        .padding(innerPadding)
+    ) {
 
-            when (val uiState = state) {
+      when (val uiState = state) {
 
-                is CountriesListUiState.Countries -> {
-                    val list = uiState.countries
+        is CountriesListUiState.Countries -> {
+          val list = uiState.countries
 
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
-                        contentPadding = PaddingValues(12.dp),
-                        verticalArrangement = Arrangement.spacedBy(10.dp)
-                    ) {
-                        items(list, key = { it.name }) { country ->
-                            CountryCard(
-                                country,
-                                onClick,
-                                onClickFavorite
-                            )
-                        }
-                    }
-                }
-
-                is CountriesListUiState.Idle -> {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator()
-                    }
-                }
-
-                else -> {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text("Something went wrong")
-                    }
-                }
+          LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(12.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+          ) {
+            items(list, key = { it.name }) { country ->
+              CountryCard(
+                country,
+                onClick,
+                onClickFavorite
+              )
             }
+          }
         }
+
+        is CountriesListUiState.Idle -> {
+          Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+          ) {
+            CircularProgressIndicator()
+          }
+        }
+
+        else -> {
+          Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+          ) {
+            Text("Something went wrong")
+          }
+        }
+      }
     }
+  }
 }
 
 @Composable
 fun CountryCard(
-    country: Country,
-    onClick: (String) -> Unit,
-    onClickFavorite: (String) -> Unit
+  country: Country,
+  onClick: (String) -> Unit,
+  onClickFavorite: (String) -> Unit
 ) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable {
-                onClick(country.name)
-            },
-        elevation = CardDefaults.cardElevation(4.dp)
-    ) {
-        Column(modifier = Modifier.padding(12.dp)) {
+  Card(
+    modifier = Modifier
+      .fillMaxWidth()
+      .clickable {
+        onClick(country.name)
+      },
+    elevation = CardDefaults.cardElevation(4.dp)
+  ) {
+    Column(modifier = Modifier.padding(12.dp)) {
 
-            Text(
-                text = country.name,
-                style = MaterialTheme.typography.titleMedium
-            )
+      Text(
+        text = country.name,
+        style = MaterialTheme.typography.titleMedium
+      )
 
-            Spacer(modifier = Modifier.height(6.dp))
+      Spacer(modifier = Modifier.height(6.dp))
 
-            Text("Capital: ${country.capital}")
-            Text("Region: ${country.language}")
-            Text("Population: ${country.population}")
-            Icon(
-                imageVector = Icons.Default.Favorite,
-                contentDescription = "Favorite",
-                tint = if (country.isFavorite) {
-                    MaterialTheme.colorScheme.primary
-                } else {
-                    MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
-                },
-                modifier = Modifier.clickable {
-                    onClickFavorite(country.name)
-                }
-            )
+      Text("Capital: ${country.capital}")
+      Text("Region: ${country.language}")
+      Text("Population: ${country.population}")
+      Icon(
+        imageVector = Icons.Default.Favorite,
+        contentDescription = "Favorite",
+        tint = if (country.isFavorite) {
+          MaterialTheme.colorScheme.primary
+        } else {
+          MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+        },
+        modifier = Modifier.clickable {
+          onClickFavorite(country.name)
         }
+      )
     }
+  }
+}
+
+@Composable
+@Preview
+fun PreviewRecompositions() {
+  Column(Modifier.background(Color.White)) {
+    var recompositions by remember { mutableIntStateOf(0) }
+    Text(text = "Recompositions Count: $recompositions")
+    Recompositions { recompositions++ }
+  }
+}
+
+@Composable
+private fun Recompositions(
+  onRecompose: () -> Unit
+) {
+  var text by remember { mutableStateOf("") }
+  Card(
+    colors = CardDefaults.cardColors(containerColor = Color.White)
+  ) {
+    Column(Modifier.padding(16.dp)) {
+      TextField(
+        value = text,
+        onValueChange = { text = it }
+      )
+    }
+    SideEffect { onRecompose() }
+  }
 }

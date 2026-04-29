@@ -21,7 +21,6 @@ import retrofit2.HttpException
 
 class CountriesRepository(
   private val api: CountriesApi,
-  private val dao: CountryDao,
   private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) {
   suspend fun getCountries(page: Int = 1): CountriesResult {
@@ -33,13 +32,6 @@ class CountriesRepository(
     } catch (e: IOException) {
       CountriesResult.ConnectivityError
     }
-  }
-
-  fun observeCountries(): Flow<CountriesResult> {
-    return dao.getAll().map { countryEntities ->
-      val countries = countryEntities.map { it.toDomain() }
-      CountriesResult.Success(countries)
-    }.flowOn(dispatcher)
   }
 
   suspend fun getCountryDetails(name: String): CountryDetailsResult {
@@ -55,7 +47,7 @@ class CountriesRepository(
 
   private suspend fun loadCountries(): List<CountryDetailsResponse> {
     val countries = api.getCountries(page = 1).countries
-    dao.insertAll(*countries.map { it.toEntity() }.toTypedArray())
+//    dao.insertAll(*countries.map { it.toEntity() }.toTypedArray())
     return countries
   }
 }
