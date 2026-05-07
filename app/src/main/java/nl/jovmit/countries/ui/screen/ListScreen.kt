@@ -69,10 +69,10 @@ fun HomeScreenContent(
                 .padding(innerPadding)
         ) {
 
-            when (val uiState = state) {
+            when (state) {
 
                 is CountriesListUiState.Countries -> {
-                    val list = uiState.countries
+                    val list = state.countries
 
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),
