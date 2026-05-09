@@ -38,11 +38,14 @@ network-retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "
 network-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version = "1.10.0" }
 network-serialization-converter = { module = "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter", version = "1.0.0" }
 truth = { module = "com.google.truth:truth", version.ref = "truthVersion" }
+coroutine-test = {  module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version = "1.11.0" }
+turbine = { module = "app.cash.turbine:turbine", version = "1.2.1" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3" }
 androidx-room3-compiler = { group = "androidx.room3", name = "room3-compiler", version.ref = "room3Compiler" }
 
 [bundles]
 koin = ["koin-android", "koin-compose"]
+unit-testing = ["truth", "junit", "coroutine-test"]
 networking = ["network-okhttp", "network-retrofit", "network-serialization", "network-serialization-converter"]
 
 [plugins]
